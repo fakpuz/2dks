@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 2,
+  "rootSpaceId": "root",
+  "currentSpaceId": "root",
+  "spaceTrail": [],
+  "view": { "x": 0, "y": 0, "zoom": 1 },
+  "waypoints": [],
+  "sync": { "sha": null, "lastSyncedAt": null },
+  "spaceMemory": { "viewsBySpaceId": {} },
+  "spaces": {
+    "root": {
+      "path": "spaces/root.json",
+      "nodeCount": 0,
+      "linkCount": 0,
+      "fenceCount": 0,
+      "updatedAt": null
+    }
+  }
+}
