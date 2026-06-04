@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2DKS - 2D Knowledge Space</title>
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0f1a;
+            color: #e6eefc;
+        }
+
+        .status-dock.is-hidden,
+        .waypoint-bar.is-hidden,
+        .breadcrumbs.is-hidden,
+        .overlay-hint.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #main-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    </head>
+    <body>
+    <div class="app-shell">
+        <canvas id="main-canvas"></canvas>
+
+        <div id="runtime-warning" class="runtime-warning" hidden></div>
+
+        <div id="search-palette" class="search-palette" hidden>
+            <div class="search-shell">
+                <input id="search-input" type="text" placeholder="Search nodes, tags, or content...">
+                <div id="search-results" class="search-results"></div>
+            </div>
+        </div>
+
+        <div class="status-dock is-hidden">
+            <div id="sync-indicator" class="status-card" data-state="idle">
+                <strong>Connecting</strong>
+                <span>Checking workspace state.</span>
+            </div>
+            <div id="mode-indicator" class="status-pill">Runtime unknown</div>
+            <div id="selection-indicator" class="status-pill">No selection</div>
+        </div>
+
+        <div id="waypoint-bar" class="waypoint-bar is-hidden"></div>
+        <div id="breadcrumbs" class="breadcrumbs is-hidden"></div>
+
+        <div id="overlay-hint" class="overlay-hint is-hidden">
+            [N]ew • [E]dit • [L]ink • [G]roup • [K] Bookmark • [1-9] Jump • [M]ulti • [B]ack • [F]ull • [V] Preview • [S]ync • [H]elp
+        </div>
+
+        <aside id="node-editor" class="node-editor" hidden>
+            <div class="editor-header">
+                <input id="node-title-field" type="text" placeholder="Title">
+                <div class="editor-actions">
+                    <button id="pin-editor" type="button" class="editor-icon">Pin</button>
+                </div>
+            </div>
+            <div class="editor-content">
+                <div id="tag-filter-bar" class="tag-filter-bar"></div>
+                <div class="editor-main">
+                    <textarea id="node-content-field" rows="8" placeholder="Content..." style="background: transparent; border: none; padding: 0; resize: none; margin-bottom: 12px;"></textarea>
+                </div>
+                <div class="editor-meta">
+                    <div class="template-row inline-meta">
+                        <select id="node-template-picker">
+                            <option value="note">Note</option>
+                            <option value="idea">Idea</option>
+                            <option value="question">Question</option>
+                            <option value="task">Task</option>
+                            <option value="reference">Reference</option>
+                        </select>
+                    </div>
+                    <div class="layout-row inline-meta">
+                        <button class="layout-btn" data-layout="grid" type="button">Grid</button>
+                        <button class="layout-btn" data-layout="circle" type="button">Circle</button>
+                        <button class="layout-btn" data-layout="radial" type="button">Radial</button>
+                        <button class="layout-btn" data-layout="force" type="button">Force</button>
+                    </div>
+                    <div class="backlinks-wrap inline-meta">
+                        <div id="backlinks-panel" class="backlinks-panel backlinks-inline"></div>
+                    </div>
+                </div>
+                
+                <div class="style-panel-merged">
+                    <div class="style-grid-compact">
+                        <div class="style-item" title="Color">
+                            <div class="color-grid">
+                                <button class="color-btn" data-color="#1c2e44" style="background: #1c2e44;"></button>
+                                <button class="color-btn" data-color="#4a1c1c" style="background: #4a1c1c;"></button>
+                                <button class="color-btn" data-color="#1c4a2e" style="background: #1c4a2e;"></button>
+                                <button class="color-btn" data-color="#4a4a1c" style="background: #4a4a1c;"></button>
+                                <button class="color-btn" data-color="#4a1c4a" style="background: #4a1c4a;"></button>
+                                <button class="color-btn" data-color="#1c4a4a" style="background: #1c4a4a;"></button>
+                            </div>
+                        </div>
+                        <div class="style-item" title="Shape">
+                            <div class="shape-grid">
+                                <button class="shape-btn" data-shape="circle" title="Circle">●</button>
+                                <button class="shape-btn" data-shape="square" title="Square">■</button>
+                                <button class="shape-btn" data-shape="triangle" title="Triangle">▲</button>
+                                <button class="shape-btn" data-shape="diamond" title="Diamond">◆</button>
+                                <button class="shape-btn" data-shape="hexagon" title="Hexagon">⬢</button>
+                            </div>
+                        </div>
+                        <div class="style-item" title="Size">
+                            <input type="range" id="node-size-slider" min="20" max="100" value="40">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <aside id="group-editor" class="group-editor" hidden>
+            <div class="editor-header">
+                <input id="group-name-field" type="text" placeholder="Group name">
+                <div class="editor-actions">
+                    <button id="close-group-editor" type="button" class="editor-icon">×</button>
+                </div>
+            </div>
+            <div class="editor-content">
+                <div class="group-editor-meta">
+                    <div id="group-meta-summary" class="markdown-body"></div>
+                </div>
+                <div class="group-editor-actions">
+                    <button id="group-fit-btn" type="button">Fit To Nodes</button>
+                    <button id="group-collapse-btn" type="button">Collapse</button>
+                    <button id="group-delete-btn" type="button">Delete</button>
+                </div>
+            </div>
+        </aside>
+
+        <aside id="waypoint-editor" class="group-editor" hidden>
+            <div class="editor-header">
+                <input id="waypoint-name-field" type="text" placeholder="Waypoint name">
+                <div class="editor-actions">
+                    <button id="close-waypoint-editor" type="button" class="editor-icon">×</button>
+                </div>
+            </div>
+            <div class="editor-content">
+                <div class="group-editor-meta">
+                    <div id="waypoint-meta-summary" class="markdown-body"></div>
+                </div>
+                <div class="group-editor-actions">
+                    <button id="waypoint-update-btn" type="button">Update View</button>
+                    <button id="waypoint-delete-btn" type="button">Delete</button>
+                </div>
+            </div>
+        </aside>
+
+        <div id="hover-preview" class="hover-preview" hidden>
+            <div id="hover-preview-title" class="hover-preview-title"></div>
+            <div id="hover-preview-body" class="markdown-body hover-preview-body"></div>
+        </div>
+
+        <canvas id="minimap" class="minimap is-hidden"></canvas>
+    </div>
+
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

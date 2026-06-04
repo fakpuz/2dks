@@ -1,0 +1,20 @@
+{
+  "name": "2dks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "dev:worker": "wrangler dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "wrangler deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "vite": "^8.0.3",
+    "wrangler": "^4.78.0"
+  }
+}

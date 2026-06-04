@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "2dks",
+  "main": "worker/src/index.js",
+  "compatibility_date": "2026-03-22",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "build": {
+    "command": "npm run build"
+  },
+  "vars": {
+    // Graph truth lives on a dedicated branch of this same repo (not a
+    // separate repo). The Worker reads and writes public/graph/... on this
+    // branch via the GitHub API; the app code lives on `main`.
+    "GITHUB_OWNER": "fakpuz",
+    "GITHUB_REPO": "2dks",
+    "GITHUB_BRANCH": "data"
+  }
+}
